@@ -1,0 +1,16 @@
+{
+  "name": "juca-backend",
+  "version": "1.0.0",
+  "description": "JUCA Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "AdrianRDG",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
