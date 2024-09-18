@@ -9,7 +9,13 @@ const app = express();
 // CORS configuration
 app.use(cors());
 
+//Reading and body parsing
+app.use(express.json());
+
 //Database
 dbConnection();
+
+//Routes
+app.use('/api/users', require('./routes/user.route'));
 
 app.listen(process.env.APP_PORT, () => console.log(`Running on ${process.env.APP_PORT} port`))
