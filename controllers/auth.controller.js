@@ -20,9 +20,9 @@ const loginMethod = async (request, response) => {
             return response.status(404).json(badResp);
         }
 
-        const token = await generateJWT(user.uid);
+        const token = await generateJWT(user.id);
 
-        return response.status(200).json({
+        response.status(200).json({
             ok: true,
             token
         });
