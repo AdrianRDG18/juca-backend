@@ -2,7 +2,7 @@ const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const { generateJWT } = require('../helpers/jwt');
 
-const createUser = async (request, response) =>{
+const createUser = async(request, response) =>{
     try{
         const { email, password } = request.body;
         
@@ -43,7 +43,7 @@ const createUser = async (request, response) =>{
     }
 }
 
-const getUsers = async (request, response) => {
+const getUsers = async(request, response) => {
 
     const limit = Number(request.query.limit) || 10;
     const page = Number(request.query.page) || 1;
@@ -79,7 +79,65 @@ const getUsers = async (request, response) => {
         });
     }
 }
+
+const updateUser = async(request, response) =>{
+
+    const user_id = request.params.id;
+    const updater_id =  request.uid;
+
+    try {
+
+        const user = await User.findById(user_id);
+
+        if(!user){
+            return response.status(404).json({
+                ok: false,
+                msg: 'User not found'
+            });
+        }
+
+        // Desestructuring body to extrac fields we need to update
+        const {password, role, google, status, email, ...fields} = request.body;
+
+        if(user.email !== email){
+
+            const userExist = await User.findOne({email});
+            if(userExist){
+                return response.status(400).json({
+                    ok: false,
+                    msg: 'The email is already exists'
+                });
+            }
+        }
+
+        const updater = await User.findById(updater_id);
+
+        if(updater.role === 'ADMIN_ROLE'){
+            fields.status = status;
+            fields.role = role;
+        }
+
+        fields.email = email;
+
+        const userUpdated = await User.findByIdAndUpdate(user_id, fields, { new: true});
+
+        response.json({
+            ok: true,
+            msg: "User updated successfully",
+            userUpdated
+        });
+
+    } catch (error) {
+        console.log(error);
+        response.status(500).json({
+            ok: false,
+            error
+        });
+    }
+}
+
 module.exports = {
     createUser,
-    getUsers
+    getUsers,
+    updateUser
 }
