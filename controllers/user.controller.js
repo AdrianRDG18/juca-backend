@@ -136,8 +136,48 @@ const updateUser = async(request, response) =>{
     }
 }
 
+const deleteUser = async(request, response) =>{
+
+    const id_to_delete = request.params.id;
+    const id_eraser = request.uid;
+
+    try{
+
+        if(id_to_delete === id_eraser){
+            return response.status(400).json({
+                ok: false,
+                msg: 'You can not delete yourself'
+            });
+        }
+
+        const user = await User.findById(id_to_delete);
+
+        if(!user || user.status === 'DELETED'){
+            return response.status(404).json({
+                ok: false,
+                msg: 'User not found'
+            });
+        }
+
+        await User.findByIdAndUpdate(id_to_delete, {status: 'DELETED'});
+
+        response.json({
+            ok: true,
+            msg: 'User deleted successfully'
+        });
+
+    }catch(error){
+        console.log(error);
+        response.status(500).json({
+            ok: false,
+            error
+        });
+    }
+};
+
 module.exports = {
     createUser,
     getUsers,
-    updateUser
+    updateUser,
+    deleteUser
 }
