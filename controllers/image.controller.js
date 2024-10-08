@@ -1,4 +1,4 @@
-const { uploadImageAWS, deleteImageAWS } = require('../helpers/aws');
+const { uploadImageAWS, getImageAWS, deleteImageAWS } = require('../helpers/aws');
 const User = require('../models/user.model');
 const { v4: uuidv4 } = require('uuid');
 
@@ -101,6 +101,35 @@ async function deleteActualImage(collection){
     }
 }
 
+const getImage = async(request, response) =>{
+
+    const { key } = request.params;
+
+    try {
+
+        const result = await getImageAWS(key);
+
+        // Handle errors
+        result.on('error', (error) => {
+            console.log(error);
+            response.status(500).send({
+                ok: false,
+                msg: error.message
+            });
+        });
+
+        result.pipe(response);
+
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            ok: false,
+            error
+        });
+    }
+};
+
 module.exports = {
-    uploadImage
+    uploadImage,
+    getImage
 };

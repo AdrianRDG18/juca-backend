@@ -6,6 +6,14 @@ const s3 = new S3({
     secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
 });
 
+async function getImageAWS(key){
+    const getParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key
+    };
+    return await s3.getObject(getParams).createReadStream();
+};
+
 function uploadImageAWS(file, fileName){
     const uploadParams = {
         Bucket: process.env.AWS_BUCKET_NAME,
